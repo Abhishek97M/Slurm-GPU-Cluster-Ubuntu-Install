@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>slurm_installation.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="slurm-installation-steps-ubuntu">Slurm Installation Steps Ubuntu</h1>
+<blockquote>
+<p>This guide will help you create and install a GPU HPC cluster with a job queue and user management. The idea is to have a GPU cluster which allows use of GPUs by many people.</p>
+</blockquote>
+<h2 id="outline-of-steps">Outline of steps:</h2>
+<pre class="hljs"><code><div>1. Prepare hardware
+
+2. Install OSs
+
+3. Create slurm/munge users
+
+4. Install Software (Nvidia drivers)
+
+5. Install/configure file sharing (NFS here; if using more than one node/computer in the cluster)
+
+6. Install munge/SLURM and configure
+
+7. User management
+</div></code></pre>
+<h2 id="preparing-hardware">Preparing Hardware</h2>
+<p>For hardware , we have used a hardware setup of</p>
+<pre class="hljs"><code><div>1. 1 master node (2 core VM)
+
+2. 2 worker nodes (2 core VM) with atleast 1 worker node (32 core machine) containing 1 GPU(V100)
+</div></code></pre>
+<h2 id="installing-operating-systems">Installing operating systems</h2>
+<blockquote>
+<p>In our setup we are using Ubuntu 20.04.3 LTS,</p>
+</blockquote>
+<blockquote>
+<p>Note: Along the way I used the package manager to update/upgade software many times (sudo apt-get update and sudo apt-get upgrade) followed by reboots. If something is not working, this can be a first step to try to debug it.</p>
+</blockquote>
+<h2 id="create-slurmmunge-users">Create slurm/munge users</h2>
+<p>On all machines we need the munge authentication service and slurm installed. First, we want to have the munge and slurm users/groups with the same UIDs and GIDs. In my experience, these are the only GID and UIDs that need synchronization for the cluster to work. On all machines:</p>
+<pre class="hljs"><code><div>export MUNGEUSER=966
+
+groupadd -g $MUNGEUSER munge
+
+sudo useradd  -m -c &quot;MUNGE Uid 'N' Gid Emporium&quot; -d /var/lib/munge -u $MUNGEUSER -g munge  -s /sbin/nologin munge
+
+export SLURMUSER=967
+
+groupadd -g $SLURMUSER slurm
+
+useradd  -m -c &quot;SLURM workload manager&quot; -d /var/lib/slurm -u $SLURMUSER -g slurm  -s /bin/bash slurm
+</div></code></pre>
+<h2 id="installing-softwaredrivers">Installing software/drivers</h2>
+<p>Next you should install SSH. Open a terminal and install:</p>
+<pre class="hljs"><code><div>sudo apt install openssh-server -y.
+</div></code></pre>
+<p>Once you have SSH on the machines, you may want to use a parallel SSH utility to execute commands on all machines at once.</p>
+<p>Install NVIDIA drivers</p>
+<pre class="hljs"><code><div>sudo add-apt-repository ppa:graphics-drivers/ppa
+sudo apt-get update
+sudo apt-get install nvidia-driver-470
+</div></code></pre>
+<h2 id="install-nfs-shared-storage">Install NFS (shared storage)</h2>
+<h3 id="master-node">Master Node</h3>
+<p>On the master server, do:</p>
+<pre class="hljs"><code><div>sudo apt install nfs-kernel-server -y
+</div></code></pre>
+<p>Make a storage location:</p>
+<pre class="hljs"><code><div>sudo mkdir /storage
+</div></code></pre>
+<p>Change ownership to your administrative username and group:</p>
+<pre class="hljs"><code><div>sudo chown vikas:vikas /storage
+</div></code></pre>
+<p>Next we need to add rules for the shared location. This is done with:</p>
+<pre class="hljs"><code><div>sudo nano /etc/exports
+</div></code></pre>
+<p>Then adding the line:</p>
+<pre class="hljs"><code><div>/storage *(rw,sync,no_root_squash)
+</div></code></pre>
+<p>The * is for IP addresses or hostnames. In this case we allow anything, but you may want to limit it to your IPs/hostnames in the cluster. In fact, it wasn't working for me unless I explicitly set the IPs of the clients here. You have to have a separate entry for each IP. Mine ended up looking like:</p>
+<p>/storage 192.168.100.xx(rw,sync,no_root_squash,all_squash,anonuid=999999,anongid=999999)
+192.168.100.xx(rw,sync,no_root_squash,all_squash,anonuid=999999,anongid=999999)</p>
+<p>where the 'xx's are actual numbers.</p>
+<p>Then start the NFS service:</p>
+<pre class="hljs"><code><div>sudo systemctl start nfs-kernel-server.service
+</div></code></pre>
+<p>It should start automatically upon restarts.</p>
+<p>You should also add a rule to allow for NFS traffic from the workers through port 2049. This is done like so:</p>
+<pre class="hljs"><code><div>sudo ufw allow from &lt;ip_addr&gt; to any port nfs
+</div></code></pre>
+<h3 id="client-nodes">Client Nodes</h3>
+<p>Now we can set up the clients. On all worker servers:</p>
+<pre class="hljs"><code><div>sudo apt install nfs-common -y
+sudo mkdir /storage
+sudo chown vikas:vikas /storage
+sudo mount smaster:/storage /storage
+</div></code></pre>
+<p>To make the drive mount upon restarts for the worker nodes, add this to fstab (sudo nano /etc/fstab):</p>
+<pre class="hljs"><code><div>smaster:/storage /storage nfs auto,timeo=14,intr 0 0
+</div></code></pre>
+<h2 id="preparing-for-slurm-installation">Preparing for SLURM installation</h2>
+<h3 id="passwordless-ssh-from-master-to-all-workers">Passwordless SSH from master to all workers</h3>
+<p>First we need passwordless SSH between the master and compute nodes. We are still using master as the master node hostname and worker as the worker hostname. On the master:</p>
+<pre class="hljs"><code><div>ssh-keygen
+ssh-copy-id vikas@sworker
+</div></code></pre>
+<h3 id="install-munge-on-the-master">Install munge on the master:</h3>
+<pre class="hljs"><code><div>sudo apt-get install libmunge-dev libmunge2 munge -y
+sudo systemctl enable munge
+sudo systemctl start munge
+</div></code></pre>
+<p>Test munge if you like:</p>
+<pre class="hljs"><code><div>munge -n | unmunge | grep STATUS
+</div></code></pre>
+<p>Copy the munge key to /storage</p>
+<pre class="hljs"><code><div>sudo cp /etc/munge/munge.key /storage/
+sudo chown munge /storage/munge.key
+sudo chmod 400 /storage/munge.key
+</div></code></pre>
+<h3 id="install-munge-on-worker-nodes">Install munge on worker nodes:</h3>
+<pre class="hljs"><code><div>sudo apt-get install libmunge-dev libmunge2 munge
+sudo cp /storage/munge.key /etc/munge/munge.key
+sudo systemctl enable munge
+sudo systemctl start munge
+</div></code></pre>
+<p>If you want, you can test munge:</p>
+<pre class="hljs"><code><div>munge -n | unmunge | grep STATUS
+</div></code></pre>
+<h2 id="prepare-db-for-slurm">Prepare DB for SLURM</h2>
+<p>These instructions more or less follow this github repo: https://github.com/mknoxnv/ubuntu-slurm</p>
+<p>First we want to clone the repo:</p>
+<pre class="hljs"><code><div>cd /storage 
+git clone https://github.com/mknoxnv/ubuntu-slurm.git
+</div></code></pre>
+<h3 id="install-prereqs">Install prereqs:</h3>
+<pre class="hljs"><code><div>sudo apt-get install git gcc make ruby ruby-dev libpam0g-dev mariadb-server libmariadbclient-dev libmariadb-dev  mariadb-server build-essential libssl-dev python3 -y
+
+sudo gem install fpm
+</div></code></pre>
+<p>Next we set up MariaDB for storing SLURM data:</p>
+<pre class="hljs"><code><div>sudo systemctl enable mysql
+sudo systemctl start mysql
+sudo mysql -u root
+</div></code></pre>
+<p>Within mysql:</p>
+<pre class="hljs"><code><div>create database slurm_acct_db;
+create user 'slurm'@'localhost';
+set password for 'slurm'@'localhost' = password('slurmdbpass');
+grant usage on *.* to 'slurm'@'localhost';
+grant all privileges on slurm_acct_db.* to 'slurm'@'localhost';
+flush privileges;
+exit
+</div></code></pre>
+<p>Copy the default db config file:</p>
+<pre class="hljs"><code><div>cp /storage/ubuntu-slurm/slurmdbd.conf /storage
+</div></code></pre>
+<p>Ideally you want to change the password to something different than slurmdbpass. This must also be set in the config file /storage/slurmdbd.conf.</p>
+<h2 id="install-slurm">Install SLURM</h2>
+<h3 id="download-and-install-slurm-on-master">Download and install SLURM on Master</h3>
+<pre class="hljs"><code><div>mkdir slurm_build
+
+cd slurm_build
+
+wget https://download.schedmd.com/slurm/slurm-20.11.8.tar.bz2
+
+tar xvf slurm-20.11.8.tar.bz2
+
+cd slurm-20.11.8
+
+./configure --prefix=/tmp/slurm-build --sysconfdir=/etc/slurm --enable-pam --with-pam_dir=/lib/x86_64-linux-gnu/security/ --without-shared-libslurm
+
+make -j
+
+make contrib
+
+make install
+
+cd ..
+</div></code></pre>
+<h3 id="install-slurm">Install SLURM</h3>
+<pre class="hljs"><code><div>fpm -s dir -t deb -v 1.0 -n slurm-20.11.8 --prefix=/usr -C /tmp/slurm-build .
+dpkg -i slurm-20.11.8_1.0_amd64.deb
+cp ./slurm-20.11.8_1.0_amd64.deb /storage/
+</div></code></pre>
+<h3 id="make-all-the-directories-we-need">Make all the directories we need:</h3>
+<pre class="hljs"><code><div>mkdir /var/spool/slurm
+chown slurm:slurm /var/spool/slurm
+chmod 755 /var/spool/slurm
+mkdir /var/spool/slurm/slurmctld
+chown slurm:slurm /var/spool/slurm/slurmctld
+chmod 755 /var/spool/slurm/slurmctld
+mkdir /var/spool/slurm/cluster_state
+chown slurm:slurm /var/spool/slurm/cluster_state
+touch /var/log/slurmctld.log
+chown slurm:slurm /var/log/slurmctld.log
+touch /var/log/slurm_jobacct.log /var/log/slurm_jobcomp.log
+chown slurm: /var/log/slurm_jobacct.log /var/log/slurm_jobcomp.log
+mkdir -p /etc/slurm/prolog.d /etc/slurm/epilog.
+</div></code></pre>
+<p>copy necessary files</p>
+<pre class="hljs"><code><div>sudo cp /storage/ubuntu-slurm/slurmdbd.service /etc/systemd/system/
+
+sudo cp /storage/ubuntu-slurm/slurmctld.service /etc/systemd/system/
+
+The slurmdbd.conf file should be copied before starting the slurm services: 
+
+sudo cp /storage/slurmdbd.conf /etc/slurm/
+
+mkdir /var/log/slurm/
+
+touch /var/log/slurm/slurmdbd.log
+</div></code></pre>
+<p>Set permissions:</p>
+<pre class="hljs"><code><div>systemctl daemon-reload
+
+chmod 600 /etc/slurm/slurmdbd.conf
+chown slurm:slurm /etc/slurm/slurmdbd.conf
+
+systemctl enable slurmdbd
+systemctl start slurmdbd
+systemctl status slurmdbd
+
+chmod 600 /etc/slurm/slurm*.conf
+chown slurm:slurm /etc/slurm/slurm*.conf
+
+systemctl enable slurmctld
+systemctl start slurmctld
+systemctl status slurmctld
+
+</div></code></pre>
+<p>Start the slurm services:</p>
+<pre class="hljs"><code><div>sudo systemctl daemon-reload
+sudo systemctl enable slurmdbd
+sudo systemctl start slurmdbd
+sudo systemctl enable slurmctld
+sudo systemctl start slurmctld
+</div></code></pre>
+<p>If the master is also going to be a worker/compute node, you should do:</p>
+<pre class="hljs"><code><div>sudo cp /storage/ubuntu-slurm/slurmd.service /etc/systemd/system/
+sudo systemctl enable slurmd
+sudo systemctl start slurmd
+</div></code></pre>
+<h2 id="worker-nodes">Worker nodes</h2>
+<p>slurmd.service</p>
+<pre class="hljs"><code><div>sudo cp /storage/ubuntu-slurm/slurmd.service /etc/systemd/system/
+sudo systemctl enable slurmd
+sudo systemctl start slurmd
+</div></code></pre>
+<p>Now install SLURM on worker nodes:</p>
+<pre class="hljs"><code><div>cd /storage
+sudo dpkg -i slurm-20.11.8_1.0_amd64.deb
+sudo systemctl enable slurmd
+sudo systemctl start slurmd
+</div></code></pre>
+<h2 id="configuring-slurm">Configuring SLURM</h2>
+<p>slurm.conf file generated by configurator easy.html.
+Put this file on all nodes of your cluster.
+See the slurm.conf man page for more information.</p>
+<p>configure your systems specs into this file (slurm.conf)</p>
+<p>visit : https://slurm.schedmd.com/configurator.html</p>
+<pre class="hljs"><code><div>cp &quot;Path to  Downloaded conf. File&quot;/slurm.conf /etc/slurm/slurm.conf
+cp /storage/ubuntu-slurm/slurm.conf /storage/slurm.conf
+</div></code></pre>
+<p>Once SLURM is installed on all nodes, we can use the command</p>
+<pre class="hljs"><code><div>sudo slurmd -C
+</div></code></pre>
+<p>to print out the machine specs. Then we can copy this line into the config file and modify it slightly. To modify it, we need to add the number of GPUs we have in the system (and remove the last part which show UpTime). Here is an example of a config line:</p>
+<pre class="hljs"><code><div>NodeName=sworker CPUs=2 Boards=1 SocketsPerBoard=2 CoresPerSocket=1 ThreadsPerCore=1 RealMemory=3903
+</div></code></pre>
+<p>Take this line and put it at the bottom of slurm.conf.</p>
+<p>Next, setup the gres.conf file. Lines in gres.conf should look like:</p>
+<pre class="hljs"><code><div>NodeName=jarvis Name=gpu File=/dev/nvidia0
+NodeName=jarvis Name=gpu File=/dev/nvidia1
+</div></code></pre>
+<p>If you have multiple GPUs, keep adding lines for each node and increment the last number after nvidia.</p>
+<p>Finally, we need to copy .conf files on all machines. This includes the slurm.conf file, gres.conf, cgroup.conf , and cgroup_allowed_devices_file.conf. Without these files it seems like things don’t work.</p>
+<pre class="hljs"><code><div>sudo cp /storage/ubuntu-slurm/cgroup* /etc/slurm/
+sudo cp /storage/slurm.conf /etc/slurm/
+sudo cp /storage/gres.conf /etc/slurm/
+</div></code></pre>
+<p>This directory should also be created on workers:</p>
+<pre class="hljs"><code><div>sudo mkdir -p /var/spool/slurmd
+sudo chown slurm /var/spool/slurmd
+</div></code></pre>
+<p>After the conf files have been copied to all workers and the master node, you may want to reboot the computers, or at least restart the slurm services:</p>
+<p>Workers: <code>sudo systemctl restart slurmd Master</code>:</p>
+<pre class="hljs"><code><div>sudo systemctl restart slurmctld
+sudo systemctl restart slurmd
+</div></code></pre>
+<p>Next we just create a cluster: <code>sudo sacctmgr add cluster compute-cluster</code></p>
+<p>check gpu node :</p>
+<blockquote>
+<p>sinfo -N -o &quot;%N %G&quot;</p>
+</blockquote>
+<p>you will see an output like this :</p>
+<pre class="hljs"><code><div>NODELIST GRES
+jarvis gpu:1
+sworker (null)
+</div></code></pre>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<p>When in doubt, first try updating software with sudo apt update;</p>
+<pre class="hljs"><code><div>sudo apt upgrade -y and rebooting (sudo reboot).
+</div></code></pre>
+<h3 id="log-files">Log files</h3>
+<p>When in doubt, you can check the log files. The locations are set in the slurm.conf file, and are /var/log/slurmd.log and /var/log/slurmctld.log by default. Open them with sudo nano /var/log/slurmctld.log. To go to the bottom of the file, use ctrl+_ and ctrl+v. I also changed the log paths to /var/log/slurm/slurmd.log and so on, and changed the permissions of the folder to be owner by slurm: sudo chown slurm:slurm /var/log/slurm.</p>
+<h3 id="checking-slurm-states">Checking SLURM states</h3>
+<p>Some helpful commands:</p>
+<p>scontrol ping -- this checks if the controller node can be reached. If this isn't working (i.e. the command returns 'DOWN' and not 'UP'), you might need to allow connections to the slurmctrlport (in the slurm.conf file). This is set to 6817 in the config file. To allow connections with the firewall, execute on all nodes :</p>
+<pre class="hljs"><code><div>sudo ufw allow from any to any port 6817
+</div></code></pre>
+<p>and</p>
+<pre class="hljs"><code><div>sudo ufw reload
+</div></code></pre>
+<h3 id="node-is-stuck-draining-drng-from-sinfo">Node is stuck draining (drng from sinfo)</h3>
+<p>This has happened due to the memory size in slurm.conf being higher than actual memory size. Double check the memory from free -m or sudo slurmd -C and update slurm.conf on all machines in the cluster. Then run</p>
+<pre class="hljs"><code><div>sudo scontrol update NodeName=worker1 State=RESUME
+</div></code></pre>
+<h3 id="nodes-are-not-visible-upon-restart">Nodes are not visible upon restart</h3>
+<p>After restarting the master node, sometimes the workers aren't there. I've found I often have to do.</p>
+<pre class="hljs"><code><div>sudo scontrol update NodeName=worker1 State=RESUME 
+</div></code></pre>
+<p>to get them working/available.</p>
+<h3 id="taking-a-node-offline">Taking a node offline</h3>
+<p>The best way to take a node offline for maintenance is to drain it:</p>
+<pre class="hljs"><code><div>sudo scontrol update NodeName=sworker State=DRAIN Reason='Maintenance'
+</div></code></pre>
+<p>Users can see the reason with sinfo -R</p>
+<h3 id="changing-ips">Changing IPs</h3>
+<p>If the IP addresses of your machines change, you will need to update these in the file /etc/hosts on all machines and /etc/exports on the master node. It's best to restart after making these changes.</p>
+<h3 id="nfs-directory-not-showing-up">NFS directory not showing up</h3>
+<p>Check the service is running on the master node: sudo systemctl status nfs-kernel-server.service</p>
+<p>If it is not working, you may have a syntax error in your /etc/exports file. Rebooting after getting this working is a good idea. Not a bad idea to reboot the client computers as well.</p>
+<p>Once you have the service running on the master node, then see if you can manually mount the drive on the clients:</p>
+<pre class="hljs"><code><div>sudo mount master:/storage /storage
+</div></code></pre>
+<p>If it is hanging here, try mounting on the master server:</p>
+<pre class="hljs"><code><div>sudo mkdir /test sudo mount master:/storage /test
+</div></code></pre>
+<p>If this works, you might have an issue with ports being blocked or other connection issues between the master and clients.</p>
+<p>You should check your firewall status with sudo ufw status. You should see a rule allowing port 2049 access from your worker nodes. If you don't have it, be sure to add it with sudo ufw allow from &lt;ip_addr&gt; to any port nfs then sudo ufw reload. You should use the IP and not the hostname. A reference for this is here.</p>
+<h3 id="node-not-able-to-connect-to-slurmctld">Node not able to connect to slurmctld</h3>
+<p>If a node isn't able to connnect to the controller (server/master), first check that time is properly synced. Try using the date command to see if the times are synced across the servers.</p>
+<h3 id="running-an-interactive-job-with-gpu">Running an interactive job with gpu:</h3>
+<pre class="hljs"><code><div>root@smaster:~# srun -n 1 -t 2:00:00  --gres=gpu:1 --pty /bin/bash -l
+root@jarvis:~# nvidia-smi
+Wed Jan 19 10:09:54 2022
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 470.86       Driver Version: 470.86       CUDA Version: 11.4     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|                               |                      |               MIG M. |
+|===============================+======================+======================|
+|   0  Tesla V100-PCIE...  Off  | 00000000:AF:00.0 Off |                    0 |
+| N/A   45C    P0    25W / 250W |    309MiB / 16160MiB |      9%      Default |
+|                               |                      |                  N/A |
++-------------------------------+----------------------+----------------------+
+
++-----------------------------------------------------------------------------+
+| Processes:                                                                  |
+|  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
+|        ID   ID                                                   Usage      |
+|=============================================================================|
+|    0   N/A  N/A      1201      G   /usr/lib/xorg/Xorg                 84MiB |
+|    0   N/A  N/A      9882    C+G   ...lib/vmware/bin/mksSandbox       18MiB |
+|    0   N/A  N/A      9977    C+G   ...lib/vmware/bin/mksSandbox       18MiB |
+|    0   N/A  N/A     10088    C+G   ...lib/vmware/bin/mksSandbox       18MiB |
+|    0   N/A  N/A     10358    C+G   ...lib/vmware/bin/mksSandbox       18MiB |
+|    0   N/A  N/A     10501    C+G   ...lib/vmware/bin/mksSandbox       20MiB |
+|    0   N/A  N/A     10597    C+G   ...lib/vmware/bin/mksSandbox       18MiB |
+|    0   N/A  N/A     10693    C+G   ...lib/vmware/bin/mksSandbox       18MiB |
+|    0   N/A  N/A     10792    C+G   ...lib/vmware/bin/mksSandbox       16MiB |
+|    0   N/A  N/A     10915    C+G   ...lib/vmware/bin/mksSandbox       18MiB |
+|    0   N/A  N/A     11916    C+G   ...lib/vmware/bin/mksSandbox       16MiB |
+|    0   N/A  N/A     12020    C+G   ...lib/vmware/bin/mksSandbox       16MiB |
+|    0   N/A  N/A    106403    C+G   ...lib/vmware/bin/mksSandbox       16MiB |
++-----------------------------------------------------------------------------+
+</div></code></pre>
+<h3 id="file-missing-accountingstoragemysqlso">File missing accounting_storage_mysql.so</h3>
+<blockquote>
+<p>accounting_storage_mysql.so is missing because you forgot to install the mariadb-devel deb before building Slurm debs. You must install the mariadb-devel deb and rebuild and reinstall Slurm debs as shown above.</p>
+</blockquote>
+<h2 id="user-management">User Management</h2>
+
+</body>
+</html>
